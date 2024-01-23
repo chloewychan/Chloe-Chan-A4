@@ -1,0 +1,40 @@
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="style.css"/>
+    </head>
+    <body onload="start();">
+        <div class="menuBar" id="menu-bar">
+            <button type="button" style="float:right" class="menuButton" onclick="showPages();">Pages</button>
+            <button type="button" style="float:right" class="menuButton" onclick="save();">Save</button>
+            <div style="float:left" class="dropdown">
+                Text
+                <div style="float:left" class="dropdownContent">
+                    <button type="button" style="float:left" class="dropdownContent" onclick="addHeading(1);">Heading 1</button>
+                    <button type="button" style="float:left" class="dropdownContent" onclick="addHeading(2);">Heading 2</button>
+                    <button type="button" style="float:left" class="dropdownContent" onclick="addHeading(3);">Heading 3</button>
+                </div>
+            </div>
+            <div style="float:left" class="dropdown">
+                Style
+                <div style="float:left" class="dropdownContent">
+                    <button type="button" style="float:left" class="dropdownContent" onclick="bold();">Bold</button>
+                    <button type="button" style="float:left" class="dropdownContent" onclick="underline();">Underline</button>
+                    <button type="button" style="float:left" class="dropdownContent" onclick="italic();">Italic</button>
+
+                    <button type="button" style="float:left" class="dropdownContent" onclick="lowerCase();">Lower Case</button>
+                    <button type="button" style="float:left" class="dropdownContent" onclick="upperCase();">Upper Case</button>
+                    <button type="button" style="float:left" class="dropdownContent" onclick="titleCase();">Title Case</button>
+                </div>
+            </div>
+        </div>
+
+        <br/>
+
+        <div id="div-content"></div>
+
+        <div style="height: 200px"></div>
+
+        <script src="main.js"></script>
+
+    </body>
+</html>
