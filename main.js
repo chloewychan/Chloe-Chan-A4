@@ -70,14 +70,12 @@ function removeText() {
 function addParagraph() {
     numberOfTexts++
 
-    textValues[Number(getId(2))] = ''
-    textStyles[Number(getId(2))] = ''
+    let id = getId(1);
 
     // Updates the array
-    textValues = pushArray(textValues, getId(1), '');
-    textStyles = pushArray(textStyles, getId(1), 'p');
+    textValues = pushArray(textValues, id, '');
+    textStyles = pushArray(textStyles, id, 'p');
 
-    let id = getId(1);
 
     // Shows texts and values
     showTexts();
@@ -137,16 +135,29 @@ function placeCursor(id) {
 // index parameter: index of the new element that will be added
 // value parameter: string that will be added to the array
 function pushArray(array, index, value) {
-    // Makes a new array 1 element larger
-    let largerArray = new Array(numberOfTexts);
+    // Create a new array
+    let newArray = [];
 
-    // Adds old array information to the larger array up to the index
+    // Copy elements from the original array to the new array, up to the index
     for (let i = 0; i < index; i++) {
-        largerArray[i] = array[i];
+        newArray.push(array[i]);
     }
 
+    // Add the new value to the new array
+    newArray.push(value);
+
+    // Copy the rest of the elements from the original array to the new array
+    for (let i = index; i < array.length; i++) {
+        newArray.push(array[i]);
+    }
+
+    // Return the new array
+    return newArray;
+
+    /*
+
     // Adds old array information to the larger array after the index
-    for (let i = index; i < numberOfTexts; i++) {
+    for (let i = index; i < (array.length + 1); i++) {
         largerArray[i + 1] = array[i];
     }
 
@@ -154,6 +165,8 @@ function pushArray(array, index, value) {
 
     // Return the larger array
     return largerArray;
+
+    */
 }
 
 // Called when an item is removed
