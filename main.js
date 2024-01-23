@@ -42,7 +42,7 @@ function showTexts() {
 function onKeyDown(event) {
     let key = event.key
 
-    if (document.getElementById(getId(0)) == '' && key == 'Backspace' && getId(0) != '0') {
+    if (document.getElementById(getId(0)).innerText == '' && key == 'Backspace' && getId(0) != '0') {
         removeText();
     }
     else if (key == 'Enter') {
@@ -51,20 +51,22 @@ function onKeyDown(event) {
 }
 
 function removeText() {
+    let idn1 = getId(-1);
+    let id0 = getId(0);
+
     numberOfTexts--;
 
     // Updates the array
-    textValues = pullArray(textValues, Number(getId(0)));
-    textStyles = pullArray(textStyles, Number(getId(0)));
+    textValues = pullArray(textValues, Number(id0));
+    textStyles = pullArray(textStyles, Number(id0));
+    
+    textValues[Number(idn1)] += '.';
 
     // Shows texts
     showTexts();
 
-    // Adds a space to the end of the previous text
-    document.getElementById(getId(-1)).innerText += ' ';
-
     // Puts cursor in the previous text
-    placeCursor(getId(-2))
+    placeCursor(idn1)
 }
 
 function addParagraph() {
@@ -121,11 +123,12 @@ function placeCursor(id) {
     // Get the editable paragraph element
     let editableParagraph = document.getElementById(id);
 
-    // Set the cursor at the beginning of the paragraph
+    // Set the cursor at the end of the paragraph
     let range = document.createRange();
+    range.selectNodeContents(editableParagraph);
+    range.collapse(false);
+
     let sel = window.getSelection();
-    range.setStart(editableParagraph, 0);
-    range.collapse(true);
     sel.removeAllRanges();
     sel.addRange(range);
 }
