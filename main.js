@@ -7,7 +7,6 @@ const DIV_CONTENT = document.getElementById('div-content');
 // VARIABLES --------------------------------- //
 
 let numberOfTexts = 2;
-let timer;
 let currentId = '0';
 
 // ARRAYS ------------------------------------ //
@@ -24,8 +23,6 @@ let italicStyles = new Array(numberOfTexts);
 function start() {
     createTexts();
     showTexts();
-
-    timer = setInterval(setId, 1);
 }
 
 // Adds to arrays with the text values and text styles
@@ -46,7 +43,7 @@ function showTexts() {
     for (let i = 0; i < numberOfTexts; i++) {
         // Adds the tags using the styles and values
         DIV_CONTENT.innerHTML +=
-        '<' + textStyles[i] + ' contenteditable id="' + i +'" onkeydown="onKeyDown(event)" onkeyup="onKeyUp(event)">' + textValues[i] + '</' + textStyles[i] + '>';
+        '<' + textStyles[i] + ' contenteditable id="' + i +'" onkeydown="onKeyDown(event)" onkeyup="onKeyUp(event)" onBlur="setId(' + i + ');">' + textValues[i] + '</' + textStyles[i] + '>';
         
         if (boldStyles[i] == true) {
             document.getElementById(i.toString()).style.fontWeight = '700';
@@ -60,8 +57,8 @@ function showTexts() {
     }
 }
 
-function setId() {
-    currentId = document.activeElement.id
+function setId(id) {
+    currentId = id;
 }
 
 // ONKEYDOWN FUNCTIONS ----------------------- //
@@ -94,6 +91,9 @@ function removeText() {
     // Extracts the text from the array
     textValues = pullArray(textValues, Number(id0));
     textStyles = pullArray(textStyles, Number(id0));
+    boldStyles = pullArray(boldStyles, Number(id0));
+    italicStyles = pullArray(italicStyles, Number(id0));
+    underlineStyles = pullArray(underlineStyles, Number(id0));
     
     // Adds a character to the end of the previous text so the backspace won't delete
     textValues[Number(idn1)] += '.';
@@ -116,6 +116,9 @@ function addText(style) {
     // Inserts a new text in the array
     textValues = pushArray(textValues, id, '');
     textStyles = pushArray(textStyles, id, style);
+    boldStyles = pushArray(boldStyles, id, false);
+    italicStyles = pushArray(italicStyles, id, false);
+    underlineStyles = pushArray(underlineStyles, id, false);
 
     // Shows the updated texts and values
     showTexts();
@@ -237,17 +240,16 @@ function bold() {
     // If the font weight is bold, make the font weight normal
     if (getComputedStyle(currentText).fontWeight == '700') {
         currentText.style.fontWeight = '400';
+        boldStyles[Number(currentId)] = false;
     }
     // If the font weight is normal, make the font weight bold
     else if (getComputedStyle(currentText).fontWeight == '400') {
         currentText.style.fontWeight = '700';
+        boldStyles[Number(currentId)] = true;
     }
 
     // Place the cursor back in the text
     placeCursor(currentId);
-
-    // Start the timer
-    timer = setInterval(setId, 1);
 }
 
 function underline() {
@@ -256,19 +258,16 @@ function underline() {
     // If the text decoration is underlined, remove the text decoration
     if (getComputedStyle(currentText).textDecorationLine == 'underline') {
         currentText.style.textDecorationLine = 'none';
-        boldStyles[Number(currentId)] = false;
+        underlineStyles[Number(currentId)] = false;
     }
     // If there is no text decoration, make the text decoration underlined
     else if (getComputedStyle(currentText).textDecorationLine == 'none') {
         currentText.style.textDecorationLine = 'underline';
-        boldStyles[Number(currentId)] = true;
+        underlineStyles[Number(currentId)] = true;
     }
 
     // Place the cursor back in the text
     placeCursor(currentId);
-
-    // Start the timer
-    timer = setInterval(setId, 1);
 }
 
 function italic() {
@@ -277,19 +276,16 @@ function italic() {
     // If the font style is italic, make the font style normal
     if (getComputedStyle(currentText).fontStyle == 'italic') {
         currentText.style.fontStyle = 'normal';
-        underlineStyles[Number(currentId)] = false;
+        italicStyles[Number(currentId)] = false;
     }
     // If the font style is normal, make the font style italic
     else if (getComputedStyle(currentText).fontStyle == 'normal') {
         currentText.style.fontStyle = 'italic';
-        underlineStyles[Number(currentId)] = true;
+        italicStyles[Number(currentId)] = true;
     }
 
     // Place the cursor back in the text
     placeCursor(currentId);
-
-    // Start the timer
-    timer = setInterval(setId, 1);
 }
 
 function lowerCase() {
@@ -301,9 +297,6 @@ function lowerCase() {
 
     // Place the cursor back in the text
     placeCursor(currentId);
-
-    // Start the timer
-    timer = setInterval(setId, 1);
 }
 
 function upperCase() {
@@ -315,9 +308,6 @@ function upperCase() {
 
     // Place the cursor back in the text
     placeCursor(currentId);
-
-    // Start the timer
-    timer = setInterval(setId, 1);
 }
 
 function titleCase() {
@@ -349,6 +339,4 @@ function titleCase() {
     showTexts();
 
     placeCursor(currentId);
-
-    timer = setInterval(setId, 1);
 }
