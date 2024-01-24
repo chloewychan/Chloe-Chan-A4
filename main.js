@@ -7,6 +7,8 @@ const DIV_CONTENT = document.getElementById('div-content');
 // VARIABLES --------------------------------- //
 
 let numberOfTexts = 2;
+let timer = setInterval(setId, 1);
+let currentId = '0';
 
 // ARRAYS ------------------------------------ //
 
@@ -15,11 +17,13 @@ let textStyles = new Array(numberOfTexts);
 
 // SETUP FUNCTIONS --------------------------- //
 
+// Called onload
 function start() {
     createTexts();
     showTexts();
 }
 
+// Adds to arrays with the text values and text styles
 function createTexts() {
     textValues[0] = 'Assistant Bunny';
     textValues[1] = '';
@@ -28,38 +32,55 @@ function createTexts() {
     textStyles[1] = 'p';
 }
 
+// Called to put the information from the array to the texts
 function showTexts() {
+    // Clears the div
     DIV_CONTENT.innerHTML = '';
+
+    // Goes through the arrays
     for (let i = 0; i < numberOfTexts; i++) {
+        // Adds the tags using the styles and values
         DIV_CONTENT.innerHTML +=
         '<' + textStyles[i] + ' contenteditable id="' + i +'" onkeydown="onKeyDown(event)" onkeyup="onKeyUp(event)">' + textValues[i] + '</' + textStyles[i] + '>';
     }
 }
 
+function setId() {
+    currentId = document.activeElement.id
+}
+
 // ONKEYDOWN FUNCTIONS ----------------------- //
 
 // Called onkeydown
+// event parameter: gets the key that was pressed
 function onKeyDown(event) {
+    // Gets the key that was pressed
     let key = event.key
 
+    // If the text is empty, the backspace key was pressed, and it isn't the first textbox, remove the text
     if (document.getElementById(getId(0)).innerText == '' && key == 'Backspace' && getId(0) != '0') {
         removeText();
     }
+    // If the enter key is pressed, add a paragraph
     else if (key == 'Enter') {
-        addParagraph();
+        addText('p');
     }
 }
 
+// Called when the backspace key is pressed and the text is empty
 function removeText() {
+    // Sets the previous and current id to prevent them from changing
     let idn1 = getId(-1);
     let id0 = getId(0);
 
+    // Decreases the number of texts
     numberOfTexts--;
 
-    // Updates the array
+    // Extracts the text from the array
     textValues = pullArray(textValues, Number(id0));
     textStyles = pullArray(textStyles, Number(id0));
     
+    // Adds a character to the end of the previous text so the backspace won't delete
     textValues[Number(idn1)] += '.';
 
     // Shows texts
@@ -69,17 +90,19 @@ function removeText() {
     placeCursor(idn1)
 }
 
-function addParagraph() {
+// Called when the enter key is pressed
+function addText(style) {
+    // Increases number of texts
     numberOfTexts++
 
+    // Sets the id of the next text to prevent it from changing
     let id = getId(1);
 
-    // Updates the array
+    // Inserts a new text in the array
     textValues = pushArray(textValues, id, '');
-    textStyles = pushArray(textStyles, id, 'p');
+    textStyles = pushArray(textStyles, id, style);
 
-
-    // Shows texts and values
+    // Shows the updated texts and values
     showTexts();
     
     // Places the cursor in the new text
@@ -88,6 +111,8 @@ function addParagraph() {
 
 // ONKEYUP FUNCTIONS ------------------------- //
 
+// Called onkeyup
+// event parameter: gets the key that was pressed
 function onKeyUp(event) {
     // Gets the key that was pressed
     let key = event.key
@@ -97,10 +122,13 @@ function onKeyUp(event) {
         document.getElementById(getId(0)).innerText = '';
     }
 
+    // Saves the added information
     saveTexts();
 }
 
+// Called when there are changes in the texts (when keys are pressed)
 function saveTexts() {
+    // Goes through the arrays
     for (let i = 0; i < numberOfTexts; i++) {
         textValues[i] = document.getElementById(i.toString()).innerText;
     }
@@ -108,17 +136,24 @@ function saveTexts() {
 
 // OTHER FUNCTIONS --------------------------- //
 
+// Called to find the id of the texts relative to where the cursor is
+// number parameter: number added to the id that the cursor is in (e.g., -1 is the previous text, 0 is the current text, 1 is the next text, etc.)
 function getId(number) {
+    // Gets the id and adds the number in the parameter
     let id = (Number(document.activeElement.id) + number).toString();
 
-    if (Number(id) != 'NaN') {
-        return id;
+    // If the id is not a number, return the id of the last text
+    if (isNaN(Number(id)) == true) {
+        return (Number(currentId) + 1).toString();
     }
+    // If the id is a number, return the id
     else {
-        return (numberOfTexts - 1).toString();
+        return id;
     }
 }
 
+// Called when the cursor changes locations
+// id parameter: the id of the text that the cursor will be placed in
 function placeCursor(id) {
     // Get the editable paragraph element
     let editableParagraph = document.getElementById(id);
@@ -138,56 +173,43 @@ function placeCursor(id) {
 // index parameter: index of the new element that will be added
 // value parameter: string that will be added to the array
 function pushArray(array, index, value) {
-    // Create a new array
-    let newArray = [];
+    // Creates a new array
+    let newArray = new Array(0);
 
-    // Copy elements from the original array to the new array, up to the index
+    // Copies elements from the original array to the new array, up to the index
     for (let i = 0; i < index; i++) {
-        newArray.push(array[i]);
+        newArray[newArray.length] = array[i];
     }
 
-    // Add the new value to the new array
-    newArray.push(value);
+    // Adds the new value to the new array
+    newArray[newArray.length] = value;
 
-    // Copy the rest of the elements from the original array to the new array
+    // Copies the rest of the elements from the original array to the new array
     for (let i = index; i < array.length; i++) {
-        newArray.push(array[i]);
+        newArray[newArray.length] = array[i];
     }
 
     // Return the new array
     return newArray;
-
-    /*
-
-    // Adds old array information to the larger array after the index
-    for (let i = index; i < (array.length + 1); i++) {
-        largerArray[i + 1] = array[i];
-    }
-
-    largerArray[index] = value;
-
-    // Return the larger array
-    return largerArray;
-
-    */
 }
 
 // Called when an item is removed
 // array parameter: original array that will become smaller
 // index parameter: index of the item that will be removed
 function pullArray(array, index) {
-    // Makes new array 1 element smaller
-    let smallerArray = new Array(numberOfTexts);
+    // Creates a new array
+    let newArray = new Array(0);
 
-    // Adds array information up to the index into the array copy
+    // Copies elements from the original array to the new array, up to the index
     for (let i = 0; i < index; i++) {
-        smallerArray[i] = array[i];
+        newArray[newArray.length] = array[i];
     }
 
-    // Adds higher array information after the index into the array copy
-    for (let i = index; i < numberOfTexts; i++) {
-        smallerArray[i - 1] = array[i];
+    // Copies the rest of the elements from the original array to the new array
+    for (let i = index + 1; i < array.length; i++) {
+        newArray[newArray.length] = array[i];
     }
 
-    return smallerArray;
+    // Return the new array
+    return newArray;
 }
