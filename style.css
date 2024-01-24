@@ -12,6 +12,18 @@ div.menuBar {
     top: 0;
 }
 
+button.pagesButton {
+    border: none;
+    background-color: #ffffff00;
+    color: #786b6b;
+    padding: 14px 16px;
+    border-radius: 5px;
+}
+
+button.pagesButton:hover {
+    background-color: #e3dbd3;
+}
+
 button.menuButton {
     border: none;
     background-color: #ffffff00;
@@ -63,14 +75,6 @@ button.dropdownContent:hover {
     background-color: #e3dbd3;
 }
 
-button.left {
-    float: left;
-}
-
-button.right {
-    float: right;
-}
-
 button:hover {
     background-color: #f6cbc0;
 }
@@ -89,4 +93,12 @@ h1, h2, h3 {
     line-height: 20px;
     font-style: normal;
     font-weight: 700;
+}
+
+p.pages {
+    display: block;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    margin-left: 0;
+    margin-right: 0;
 }

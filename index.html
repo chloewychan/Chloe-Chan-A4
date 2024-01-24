@@ -3,17 +3,38 @@
         <link rel="stylesheet" type="text/css" href="style.css"/>
     </head>
     <body onload="start();">
+
+        <br>
+
+        <h3 class="pages">Pages</h3>
+
+        <div id="div-filters">
+            <button type="button" class="menuButton" onclick="aToZ();">A to Z</button>
+            <button type="button" class="menuButton" onclick="zToA();">Z to A</button>
+        </div>
+
+        <!-- Contains buttons to view each page (updates with innerHTML in the JavaScript file)-->
+        <div id="div-pages"></div>
+
+        <br/>
+
+        <!-- Menu Bar -->
         <div class="menuBar" id="menu-bar">
-            <button type="button" style="float:right" class="menuButton" onclick="location.reload();">Reload</button>
-            <button type="button" style="float:right" class="menuButton" onclick="save();">Save</button>
+            <!-- "New Page" button and "Filter" button on the right of the menu bar -->
+            <button type="button" style="float:right" class="menuButton" onclick="newPage();">New Page</button>
+            <button type="button" style="float:right" class="menuButton" onclick="filter();">Filter</button>
+
+            <!-- "Insert" dropdown button on the left of the menu bar -->
             <div style="float:left" class="dropdown">
-                Text
+                Insert
                 <div style="float:left" class="dropdownContent">
                     <button type="button" id="a" style="float:left" class="dropdownContent" onclick="addText('h1');">Heading 1</button>
                     <button type="button" id="b" style="float:left" class="dropdownContent" onclick="addText('h2');">Heading 2</button>
                     <button type="button" id="c" style="float:left" class="dropdownContent" onclick="addText('h3');">Heading 3</button>
                 </div>
             </div>
+
+            <!-- "Style" dropdown button on the left of the menu bar -->
             <div style="float:left" class="dropdown">
                 Style
                 <div style="float:left" class="dropdownContent">
@@ -30,8 +51,10 @@
 
         <br/>
 
-        <div id="div-content"></div>
+        <!-- Contains texts of each page (updated with innerHTML in the JavaScript file) -->
+        <div id="div-texts"></div>
 
+        <!-- Adds a space to the bottom of the page-->
         <div style="height: 200px"></div>
 
         <script src="main.js"></script>

@@ -2,63 +2,220 @@
 
 // CONSTANTS --------------------------------- //
 
-const DIV_CONTENT = document.getElementById('div-content');
+const DIV_PAGES = document.getElementById('div-pages');
+const DIV_TEXTS = document.getElementById('div-texts');
+const DIV_FILTERS = document.getElementById('div-filters');
 
 // VARIABLES --------------------------------- //
 
-let numberOfTexts = 2;
+let numberOfPages = 1;
+let currentPage = 0;
 let currentId = '0';
 
 // ARRAYS ------------------------------------ //
 
-let textValues = new Array(numberOfTexts);
-let textStyles = new Array(numberOfTexts);
-let boldStyles = new Array(numberOfTexts);
-let underlineStyles = new Array(numberOfTexts);
-let italicStyles = new Array(numberOfTexts);
+let numberOfTexts = new Array(numberOfPages);
+let textValueArrays = new Array(numberOfPages);
+let textStyleArrays = new Array(numberOfPages);
+let boldStyleArrays = new Array(numberOfPages);
+let underlineStyleArrays = new Array(numberOfPages);
+let italicStyleArrays = new Array(numberOfPages);
 
 // SETUP FUNCTIONS --------------------------- //
 
 // Called onload
 function start() {
-    createTexts();
+    createArrays();
+    showPages();
     showTexts();
+
+    DIV_FILTERS.hidden = true;
 }
 
 // Adds to arrays with the text values and text styles
-function createTexts() {
-    textValues[0] = 'Assistant Bunny';
-    textValues[1] = '';
+function createArrays() {
+    numberOfTexts[0] = 2;
 
-    textStyles[0] = 'h1';
-    textStyles[1] = 'p';
+    textValueArrays[0] = new Array(numberOfTexts[currentPage]);
+    textStyleArrays[0] = new Array(numberOfTexts[currentPage]);
+    boldStyleArrays[0] = new Array(numberOfTexts[currentPage]);
+    underlineStyleArrays[0] = new Array(numberOfTexts[currentPage]);
+    italicStyleArrays[0] = new Array(numberOfTexts[currentPage]);
+
+    textValueArrays[currentPage][0] = 'New Page';
+    textValueArrays[currentPage][1] = 'Text';
+
+    textStyleArrays[currentPage][0] = 'h1';
+    textStyleArrays[currentPage][1] = 'p';
+
+    boldStyleArrays[currentPage][0] = true;
+    boldStyleArrays[currentPage][1] = false;
+
+    underlineStyleArrays[currentPage][0] = false;
+    underlineStyleArrays[currentPage][1] = false;
+
+    italicStyleArrays[currentPage][0] = false;
+    italicStyleArrays[currentPage][1] = false;
 }
 
 // Called to put the information from the array to the texts
 function showTexts() {
+    showPages();
+
     // Clears the div
-    DIV_CONTENT.innerHTML = '';
+    DIV_TEXTS.innerHTML = '';
 
     // Goes through the arrays
-    for (let i = 0; i < numberOfTexts; i++) {
+    for (let i = 0; i < numberOfTexts[currentPage]; i++) {
         // Adds the tags using the styles and values
-        DIV_CONTENT.innerHTML +=
-        '<' + textStyles[i] + ' contenteditable id="' + i +'" onkeydown="onKeyDown(event)" onkeyup="onKeyUp(event)" onBlur="setId(' + i + ');">' + textValues[i] + '</' + textStyles[i] + '>';
+        DIV_TEXTS.innerHTML +=
+        '<' + textStyleArrays[currentPage][i] + ' contenteditable id="' + i +'" onkeydown="onKeyDown(event)" onkeyup="onKeyUp(event)" onBlur="setId(' + i + ');">' + textValueArrays[currentPage][i] + '</' + textStyleArrays[currentPage][i] + '>';
         
-        if (boldStyles[i] == true) {
+        if (boldStyleArrays[currentPage][i] == true) {
             document.getElementById(i.toString()).style.fontWeight = '700';
         }
-        if (underlineStyles[i] == true) {
+        else if (boldStyleArrays[currentPage][i] == false) {
+            document.getElementById(i.toString()).style.fontWeight = '400';
+        }
+        if (underlineStyleArrays[currentPage][i] == true) {
             document.getElementById(i.toString()).style.textDecorationLine = 'underline';
         }
-        if (italicStyles[i] == true) {
+        else if (underlineStyleArrays[currentPage][i] == false) {
+            document.getElementById(i.toString()).style.textDecorationLine = 'none';
+        }
+        if (italicStyleArrays[currentPage][i] == true) {
             document.getElementById(i.toString()).style.fontStyle = 'italic';
         }
+        else if (italicStyleArrays[currentPage][i] == false) {
+            document.getElementById(i.toString()).style.fontStyle = 'normal';
+        }
+    }
+}
+
+function showPages() {
+    // Clears the div
+    DIV_PAGES.innerHTML = '';
+
+    // Goes through the arrays
+    for (let i = 0; i < numberOfPages; i++) {
+        // Adds buttons
+        DIV_PAGES.innerHTML +=
+        '<button type="button" class="pagesButton" onclick="currentPage = ' + i + '; showTexts();">' + textValueArrays[i][0] + '</button>';
     }
 }
 
 function setId(id) {
     currentId = id;
+}
+
+// MENU BAR FUNCTIONS ----------------------- //
+
+function newPage() {
+    numberOfPages++;
+
+    currentPage = numberOfPages - 1;
+
+    numberOfTexts[currentPage] = 2;
+    textValueArrays[currentPage] = ['New Page', 'Text'];
+    textStyleArrays[currentPage] = ['h1', 'p'];
+    boldStyleArrays[currentPage] = [true, false];
+    underlineStyleArrays[currentPage] = [false, false];
+    italicStyleArrays[currentPage] = [false, false];
+
+    showPages();
+    showTexts();
+}
+
+function filter() {
+    if (DIV_FILTERS.hidden == true) {
+        DIV_FILTERS.hidden = false;
+    }
+    else if (DIV_FILTERS.hidden == false) {
+        DIV_FILTERS.hidden = true;
+    }
+}
+
+function date() {
+    showPages();
+}
+
+function aToZ() {
+    let array = new Array(numberOfPages);
+    for (let i = 0; i < numberOfPages; i++) {
+        array[i] = convertToNumbers(textValueArrays[i][0]);
+    }
+
+    // Goes through indexes of except the last one
+    for (let i = 0; i < numberOfPages - 1; i++) {
+        // Finds the smallest item in the array
+        // Assumes the first index is the smallest
+        let indexOfSmallest = i;
+
+        // Goes through indexes after the current index
+        for (let k = i + 1; k < numberOfPages; k++) {
+            // Checks if current element is smaller than than the current smallest
+
+            if (array[k] < array[indexOfSmallest]) {
+                // If a smaller number is found, keep it
+                indexOfSmallest = k;
+            }
+        }
+
+        // Stores the sorted values in the array
+        storeArray(textValueArrays, i, indexOfSmallest);
+        storeArray(textStyleArrays, i, indexOfSmallest);
+        storeArray(boldStyleArrays, i, indexOfSmallest);
+        storeArray(underlineStyleArrays, i, indexOfSmallest);
+        storeArray(italicStyleArrays, i, indexOfSmallest);
+    }
+
+    // Updates the product list
+    showPages();
+}
+
+function zToA() {
+    let array = new Array(numberOfPages);
+    for (let i = 0; i < numberOfPages; i++) {
+        array[i] = convertToNumbers(textValueArrays[i][0]);
+    }
+
+    // Goes through indexes of except the last one
+    for (let i = 0; i < numberOfPages - 1; i++) {
+        // Finds the smallest item in the array
+        // Assumes the first index is the smallest
+        let indexOfLargest = i;
+
+        // Goes through indexes after the current index
+        for (let k = i + 1; k < numberOfPages; k++) {
+            // Checks if current element is smaller than than the current smallest
+
+            if (array[k] > array[indexOfLargest]) {
+                // If a smaller number is found, keep it
+                indexOfLargest = k;
+            }
+        }
+
+        // Stores the sorted values in the array
+        storeArray(textValueArrays, i, indexOfLargest);
+        storeArray(textStyleArrays, i, indexOfLargest);
+        storeArray(boldStyleArrays, i, indexOfLargest);
+        storeArray(underlineStyleArrays, i, indexOfLargest);
+        storeArray(italicStyleArrays, i, indexOfLargest);
+    }
+
+    // Updates the product list
+    showPages();
+}
+
+function convertToNumbers(string) {
+    return string.toLowerCase().replaceAll('a', '00').replaceAll('b', '01').replaceAll('c', '03').replaceAll('d', '04').replaceAll('e', '05').replaceAll('f', '06').replaceAll('g', '07').replaceAll('h', '08').replaceAll('i', '09').replaceAll('j', '10').replaceAll('k', '11').replaceAll('l', '12').replaceAll('m', '13').replaceAll('n', '14').replaceAll('o', '15').replaceAll('p', '16').replaceAll('q', '17').replaceAll('r', '18').replaceAll('s', '19').replaceAll('t', '20').replaceAll('u', '21').replaceAll('v', '22').replaceAll('w', '23').replaceAll('x', '24').replaceAll('y', '25').replaceAll('z', '26');
+}
+
+function storeArray(array, i, index) {
+    // Stores the first temporarily before swapping the smallest element in
+    let temp = array[i];
+    array[i] = array[index];
+    array[index] = temp;
 }
 
 // ONKEYDOWN FUNCTIONS ----------------------- //
@@ -86,17 +243,17 @@ function removeText() {
     let id0 = getId(0);
 
     // Decreases the number of texts
-    numberOfTexts--;
+    numberOfTexts[currentPage]--;
 
     // Extracts the text from the array
-    textValues = pullArray(textValues, Number(id0));
-    textStyles = pullArray(textStyles, Number(id0));
-    boldStyles = pullArray(boldStyles, Number(id0));
-    italicStyles = pullArray(italicStyles, Number(id0));
-    underlineStyles = pullArray(underlineStyles, Number(id0));
+    textValueArrays[currentPage] = pullArray(textValueArrays[currentPage], Number(id0));
+    textStyleArrays[currentPage] = pullArray(textStyleArrays[currentPage], Number(id0));
+    boldStyleArrays[currentPage] = pullArray(boldStyleArrays[currentPage], Number(id0));
+    italicStyleArrays[currentPage] = pullArray(italicStyleArrays[currentPage], Number(id0));
+    underlineStyleArrays[currentPage] = pullArray(underlineStyleArrays[currentPage], Number(id0));
     
     // Adds a character to the end of the previous text so the backspace won't delete
-    textValues[Number(idn1)] += '.';
+    textValueArrays[currentPage][Number(idn1)] += '.';
 
     // Shows texts
     showTexts();
@@ -108,17 +265,26 @@ function removeText() {
 // Called when the enter key is pressed
 function addText(style) {
     // Increases number of texts
-    numberOfTexts++
+    numberOfTexts[currentPage]++
 
     // Sets the id of the next text to prevent it from changing
     let id = getId(1);
 
     // Inserts a new text in the array
-    textValues = pushArray(textValues, id, '');
-    textStyles = pushArray(textStyles, id, style);
-    boldStyles = pushArray(boldStyles, id, false);
-    italicStyles = pushArray(italicStyles, id, false);
-    underlineStyles = pushArray(underlineStyles, id, false);
+    textValueArrays[currentPage] = pushArray(textValueArrays[currentPage], id, '');
+    textStyleArrays[currentPage] = pushArray(textStyleArrays[currentPage], id, style);
+
+    let bold;
+    if (style.replaceAll('h', '').length != style.length) {
+        bold = true;
+    }
+    else {
+        bold = false;
+    }
+
+    boldStyleArrays[currentPage] = pushArray(boldStyleArrays[currentPage], id, bold);
+    italicStyleArrays[currentPage] = pushArray(italicStyleArrays[currentPage], id, false);
+    underlineStyleArrays[currentPage] = pushArray(underlineStyleArrays[currentPage], id, false);
 
     // Shows the updated texts and values
     showTexts();
@@ -147,8 +313,8 @@ function onKeyUp(event) {
 // Called when there are changes in the texts (when keys are pressed)
 function saveTexts() {
     // Goes through the arrays
-    for (let i = 0; i < numberOfTexts; i++) {
-        textValues[i] = document.getElementById(i.toString()).innerText;
+    for (let i = 0; i < numberOfTexts[currentPage]; i++) {
+        textValueArrays[currentPage][i] = document.getElementById(i.toString()).innerText;
     }
 }
 
@@ -240,12 +406,12 @@ function bold() {
     // If the font weight is bold, make the font weight normal
     if (getComputedStyle(currentText).fontWeight == '700') {
         currentText.style.fontWeight = '400';
-        boldStyles[Number(currentId)] = false;
+        boldStyleArrays[currentPage][Number(currentId)] = false;
     }
     // If the font weight is normal, make the font weight bold
     else if (getComputedStyle(currentText).fontWeight == '400') {
         currentText.style.fontWeight = '700';
-        boldStyles[Number(currentId)] = true;
+        boldStyleArrays[currentPage][Number(currentId)] = true;
     }
 
     // Place the cursor back in the text
@@ -258,12 +424,12 @@ function underline() {
     // If the text decoration is underlined, remove the text decoration
     if (getComputedStyle(currentText).textDecorationLine == 'underline') {
         currentText.style.textDecorationLine = 'none';
-        underlineStyles[Number(currentId)] = false;
+        underlineStyleArrays[currentPage][Number(currentId)] = false;
     }
     // If there is no text decoration, make the text decoration underlined
     else if (getComputedStyle(currentText).textDecorationLine == 'none') {
         currentText.style.textDecorationLine = 'underline';
-        underlineStyles[Number(currentId)] = true;
+        underlineStyleArrays[currentPage][Number(currentId)] = true;
     }
 
     // Place the cursor back in the text
@@ -276,12 +442,12 @@ function italic() {
     // If the font style is italic, make the font style normal
     if (getComputedStyle(currentText).fontStyle == 'italic') {
         currentText.style.fontStyle = 'normal';
-        italicStyles[Number(currentId)] = false;
+        italicStyleArrays[currentPage][Number(currentId)] = false;
     }
     // If the font style is normal, make the font style italic
     else if (getComputedStyle(currentText).fontStyle == 'normal') {
         currentText.style.fontStyle = 'italic';
-        italicStyles[Number(currentId)] = true;
+        italicStyleArrays[currentPage][Number(currentId)] = true;
     }
 
     // Place the cursor back in the text
@@ -290,7 +456,7 @@ function italic() {
 
 function lowerCase() {
     // Turns the string to lower case
-    textValues[Number(currentId)] = textValues[Number(currentId)].toLowerCase();
+    textValueArrays[currentPage][Number(currentId)] = textValueArrays[currentPage][Number(currentId)].toLowerCase();
 
     // Updates the array information to the texts
     showTexts();
@@ -301,7 +467,7 @@ function lowerCase() {
 
 function upperCase() {
     // Turns the string to upper case
-    textValues[Number(currentId)] = textValues[Number(currentId)].toUpperCase();
+    textValueArrays[currentPage][Number(currentId)] = textValueArrays[currentPage][Number(currentId)].toUpperCase();
 
     // Updates the array information to the texts
     showTexts();
@@ -334,7 +500,7 @@ function titleCase() {
         }
     }
 
-    textValues[Number(currentId)] = text;
+    textValueArrays[currentPage][Number(currentId)] = text;
 
     showTexts();
 
