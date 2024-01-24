@@ -29,6 +29,7 @@ function start() {
     showPages();
     showTexts();
 
+    // Hides filter div
     DIV_FILTERS.hidden = true;
 }
 
@@ -58,7 +59,7 @@ function createArrays() {
     italicStyleArrays[currentPage][1] = false;
 }
 
-// Called to put the information from the array to the texts
+// Called to put the information from the arrays to the texts
 function showTexts() {
     showPages();
 
@@ -92,6 +93,7 @@ function showTexts() {
     }
 }
 
+// Called to put the information from the arrays into page title buttons
 function showPages() {
     // Clears the div
     DIV_PAGES.innerHTML = '';
@@ -104,17 +106,22 @@ function showPages() {
     }
 }
 
+// Called to set the current id before the active id changes from clicking a button
 function setId(id) {
     currentId = id;
 }
 
 // MENU BAR FUNCTIONS ----------------------- //
 
+// Called to create a new page
 function newPage() {
+    // Increases the number of pages
     numberOfPages++;
 
+    // Makes the current page the index of the new page
     currentPage = numberOfPages - 1;
 
+    // Adds information to the new page array elements
     numberOfTexts[currentPage] = 2;
     textValueArrays[currentPage] = ['New Page', 'Text'];
     textStyleArrays[currentPage] = ['h1', 'p'];
@@ -122,40 +129,103 @@ function newPage() {
     underlineStyleArrays[currentPage] = [false, false];
     italicStyleArrays[currentPage] = [false, false];
 
+    // Updates pages and texts
     showPages();
     showTexts();
 }
 
+// Called when the filters div should be hidden or unhidden
 function filter() {
+    // If the filters are hidden, unhide them
     if (DIV_FILTERS.hidden == true) {
         DIV_FILTERS.hidden = false;
     }
+    // If the filters are unhidden, hide them
     else if (DIV_FILTERS.hidden == false) {
         DIV_FILTERS.hidden = true;
     }
 }
 
-function date() {
-    showPages();
-}
+// Called when the Longest to Shortest filter button is clicked
+function longToShort() {
+    // Creates a new array
+    let textLengths = new Array(textValueArrays.length);
 
-function aToZ() {
-    let array = new Array(numberOfPages);
-    for (let i = 0; i < numberOfPages; i++) {
-        array[i] = convertToNumbers(textValueArrays[i][0]);
+    // Adds the length of all the texts into the array
+    // Goes through the pages
+    for (let i = 0; i < textValueArrays.length; i++) {
+        // Creates a new variable
+        let number = 0;
+
+        // Goes through the texts in the current page
+        for (let k = 0; k < numberOfTexts[k]; k++) {
+            // Adds the length of the current text to the number variable
+            number += textValueArrays[i][k].length;
+        }
+
+        // Adds the number into the current element of the array
+        textLengths[i] = number;
     }
 
     // Goes through indexes of except the last one
-    for (let i = 0; i < numberOfPages - 1; i++) {
-        // Finds the smallest item in the array
+    for (let i = 0; i < textLengths.length - 1; i++) {
+        // Assumes the first index is the largest
+        let indexOfLargest = i;
+
+        // Goes through indexes after the current index
+        for (let k = i + 1; k < textLengths.length; k++) {
+            // Checks if current element is larger than than the current largest
+
+            if (textLengths[k] > textLengths[indexOfLargest]) {
+                // If a larget number is found, keep it
+                indexOfLargest = k;
+            }
+        }
+
+        // Stores the sorted values in the array
+        storeArray(textValueArrays, i, indexOfLargest);
+        storeArray(textStyleArrays, i, indexOfLargest);
+        storeArray(boldStyleArrays, i, indexOfLargest);
+        storeArray(underlineStyleArrays, i, indexOfLargest);
+        storeArray(italicStyleArrays, i, indexOfLargest);
+    }
+
+    // Updates the product list and filter visibility
+    showPages();
+    filter();
+}
+
+// Called when the Shortest to Longest filter button is clicked
+function shortToLong() {
+    // Creates a new array
+    let textLengths = new Array(textValueArrays.length);
+
+    // Adds the length of all the texts into the array
+    // Goes through the pages
+    for (let i = 0; i < textValueArrays.length; i++) {
+        // Creates a new variable
+        let number = 0;
+
+        // Goes through the texts in the current page
+        for (let k = 0; k < numberOfTexts[k]; k++) {
+            // Adds the length of the current text to the number variable
+            number += textValueArrays[i][k].length;
+        }
+
+        // Adds the number into the current element of the array
+        textLengths[i] = number;
+    }
+
+    // Goes through indexes of except the last one
+    for (let i = 0; i < textLengths.length - 1; i++) {
         // Assumes the first index is the smallest
         let indexOfSmallest = i;
 
         // Goes through indexes after the current index
-        for (let k = i + 1; k < numberOfPages; k++) {
+        for (let k = i + 1; k < textLengths.length; k++) {
             // Checks if current element is smaller than than the current smallest
 
-            if (array[k] < array[indexOfSmallest]) {
+            if (textLengths[k] < textLengths[indexOfSmallest]) {
                 // If a smaller number is found, keep it
                 indexOfSmallest = k;
             }
@@ -169,48 +239,12 @@ function aToZ() {
         storeArray(italicStyleArrays, i, indexOfSmallest);
     }
 
-    // Updates the product list
+    // Updates the product list and filter visibility
     showPages();
+    filter();
 }
 
-function zToA() {
-    let array = new Array(numberOfPages);
-    for (let i = 0; i < numberOfPages; i++) {
-        array[i] = convertToNumbers(textValueArrays[i][0]);
-    }
-
-    // Goes through indexes of except the last one
-    for (let i = 0; i < numberOfPages - 1; i++) {
-        // Finds the smallest item in the array
-        // Assumes the first index is the smallest
-        let indexOfLargest = i;
-
-        // Goes through indexes after the current index
-        for (let k = i + 1; k < numberOfPages; k++) {
-            // Checks if current element is smaller than than the current smallest
-
-            if (array[k] > array[indexOfLargest]) {
-                // If a smaller number is found, keep it
-                indexOfLargest = k;
-            }
-        }
-
-        // Stores the sorted values in the array
-        storeArray(textValueArrays, i, indexOfLargest);
-        storeArray(textStyleArrays, i, indexOfLargest);
-        storeArray(boldStyleArrays, i, indexOfLargest);
-        storeArray(underlineStyleArrays, i, indexOfLargest);
-        storeArray(italicStyleArrays, i, indexOfLargest);
-    }
-
-    // Updates the product list
-    showPages();
-}
-
-function convertToNumbers(string) {
-    return string.toLowerCase().replaceAll('a', '00').replaceAll('b', '01').replaceAll('c', '03').replaceAll('d', '04').replaceAll('e', '05').replaceAll('f', '06').replaceAll('g', '07').replaceAll('h', '08').replaceAll('i', '09').replaceAll('j', '10').replaceAll('k', '11').replaceAll('l', '12').replaceAll('m', '13').replaceAll('n', '14').replaceAll('o', '15').replaceAll('p', '16').replaceAll('q', '17').replaceAll('r', '18').replaceAll('s', '19').replaceAll('t', '20').replaceAll('u', '21').replaceAll('v', '22').replaceAll('w', '23').replaceAll('x', '24').replaceAll('y', '25').replaceAll('z', '26');
-}
-
+// Called when arrays are being sorted
 function storeArray(array, i, index) {
     // Stores the first temporarily before swapping the smallest element in
     let temp = array[i];
@@ -224,7 +258,7 @@ function storeArray(array, i, index) {
 // event parameter: gets the key that was pressed
 function onKeyDown(event) {
     // Gets the key that was pressed
-    let key = event.key
+    let key = event.key;
 
     // If the text is empty, the backspace key was pressed, and it isn't the first textbox, remove the text
     if (document.getElementById(getId(0)).innerText == '' && key == 'Backspace' && getId(0) != '0') {
@@ -259,13 +293,13 @@ function removeText() {
     showTexts();
 
     // Puts cursor in the previous text
-    placeCursor(idn1)
+    placeCursor(idn1);
 }
 
 // Called when the enter key is pressed
 function addText(style) {
     // Increases number of texts
-    numberOfTexts[currentPage]++
+    numberOfTexts[currentPage]++;
 
     // Sets the id of the next text to prevent it from changing
     let id = getId(1);
@@ -299,7 +333,7 @@ function addText(style) {
 // event parameter: gets the key that was pressed
 function onKeyUp(event) {
     // Gets the key that was pressed
-    let key = event.key
+    let key = event.key;
 
     // If the enter key was pressed, remove the line that it adds
     if (key == 'Enter') {
@@ -500,9 +534,12 @@ function titleCase() {
         }
     }
 
+    // Adds the text to the array
     textValueArrays[currentPage][Number(currentId)] = text;
 
+    // Updates the array information to the texts
     showTexts();
 
+    // Place the cursor back in the text
     placeCursor(currentId);
 }
