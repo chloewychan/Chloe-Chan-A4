@@ -75,8 +75,18 @@ button:hover {
     background-color: #f6cbc0;
 }
 
-p, h1, h2, h3 {
+p {
     padding: 10px;
     margin: none;
     line-height: 20px;
+    font-style: normal;
+    font-weight: 400;
+}
+
+h1, h2, h3 {
+    padding: 10px;
+    margin: none;
+    line-height: 20px;
+    font-style: normal;
+    font-weight: 700;
 }

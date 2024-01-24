@@ -7,13 +7,16 @@ const DIV_CONTENT = document.getElementById('div-content');
 // VARIABLES --------------------------------- //
 
 let numberOfTexts = 2;
-let timer = setInterval(setId, 1);
+let timer;
 let currentId = '0';
 
 // ARRAYS ------------------------------------ //
 
 let textValues = new Array(numberOfTexts);
 let textStyles = new Array(numberOfTexts);
+let boldStyles = new Array(numberOfTexts);
+let underlineStyles = new Array(numberOfTexts);
+let italicStyles = new Array(numberOfTexts);
 
 // SETUP FUNCTIONS --------------------------- //
 
@@ -21,6 +24,8 @@ let textStyles = new Array(numberOfTexts);
 function start() {
     createTexts();
     showTexts();
+
+    timer = setInterval(setId, 1);
 }
 
 // Adds to arrays with the text values and text styles
@@ -42,6 +47,16 @@ function showTexts() {
         // Adds the tags using the styles and values
         DIV_CONTENT.innerHTML +=
         '<' + textStyles[i] + ' contenteditable id="' + i +'" onkeydown="onKeyDown(event)" onkeyup="onKeyUp(event)">' + textValues[i] + '</' + textStyles[i] + '>';
+        
+        if (boldStyles[i] == true) {
+            document.getElementById(i.toString()).style.fontWeight = '700';
+        }
+        if (underlineStyles[i] == true) {
+            document.getElementById(i.toString()).style.textDecorationLine = 'underline';
+        }
+        if (italicStyles[i] == true) {
+            document.getElementById(i.toString()).style.fontStyle = 'italic';
+        }
     }
 }
 
@@ -212,4 +227,128 @@ function pullArray(array, index) {
 
     // Return the new array
     return newArray;
+}
+
+// STYLE FUNCTIONS --------------------------- //
+
+function bold() {
+    let currentText = document.getElementById(currentId);
+
+    // If the font weight is bold, make the font weight normal
+    if (getComputedStyle(currentText).fontWeight == '700') {
+        currentText.style.fontWeight = '400';
+    }
+    // If the font weight is normal, make the font weight bold
+    else if (getComputedStyle(currentText).fontWeight == '400') {
+        currentText.style.fontWeight = '700';
+    }
+
+    // Place the cursor back in the text
+    placeCursor(currentId);
+
+    // Start the timer
+    timer = setInterval(setId, 1);
+}
+
+function underline() {
+    let currentText = document.getElementById(currentId);
+
+    // If the text decoration is underlined, remove the text decoration
+    if (getComputedStyle(currentText).textDecorationLine == 'underline') {
+        currentText.style.textDecorationLine = 'none';
+        boldStyles[Number(currentId)] = false;
+    }
+    // If there is no text decoration, make the text decoration underlined
+    else if (getComputedStyle(currentText).textDecorationLine == 'none') {
+        currentText.style.textDecorationLine = 'underline';
+        boldStyles[Number(currentId)] = true;
+    }
+
+    // Place the cursor back in the text
+    placeCursor(currentId);
+
+    // Start the timer
+    timer = setInterval(setId, 1);
+}
+
+function italic() {
+    let currentText = document.getElementById(currentId);
+
+    // If the font style is italic, make the font style normal
+    if (getComputedStyle(currentText).fontStyle == 'italic') {
+        currentText.style.fontStyle = 'normal';
+        underlineStyles[Number(currentId)] = false;
+    }
+    // If the font style is normal, make the font style italic
+    else if (getComputedStyle(currentText).fontStyle == 'normal') {
+        currentText.style.fontStyle = 'italic';
+        underlineStyles[Number(currentId)] = true;
+    }
+
+    // Place the cursor back in the text
+    placeCursor(currentId);
+
+    // Start the timer
+    timer = setInterval(setId, 1);
+}
+
+function lowerCase() {
+    // Turns the string to lower case
+    textValues[Number(currentId)] = textValues[Number(currentId)].toLowerCase();
+
+    // Updates the array information to the texts
+    showTexts();
+
+    // Place the cursor back in the text
+    placeCursor(currentId);
+
+    // Start the timer
+    timer = setInterval(setId, 1);
+}
+
+function upperCase() {
+    // Turns the string to upper case
+    textValues[Number(currentId)] = textValues[Number(currentId)].toUpperCase();
+
+    // Updates the array information to the texts
+    showTexts();
+
+    // Place the cursor back in the text
+    placeCursor(currentId);
+
+    // Start the timer
+    timer = setInterval(setId, 1);
+}
+
+function titleCase() {
+    // Create current index variable used in the while loop
+    let currentIndex = 0;
+
+    // Save the inputted title in a variable (removed exess spaces and turned into lowercase)
+    let text = document.getElementById(currentId).innerText.trim();
+
+    // Capitalizes the first letter
+    text = text.substring(0,1).toUpperCase() + text.substring(1, text.length);
+    
+    // While the current index is less than the length of the text, the current index equals the index of the next space
+    while (currentIndex < text.length) {
+        currentIndex = text.indexOf(' ', currentIndex + 1);
+
+        // If there are still more spaces, the text equals the string before the current index + the capitalized letter after the current index + the rest of the string
+        if (currentIndex != -1) {
+            text = text.substring(0, currentIndex + 1) + text.substring(currentIndex + 1, currentIndex + 2).toUpperCase() + text.substring(currentIndex + 2, text.length);
+        }
+        // If there are no more spaces, the while loop breaks
+        else {
+            break;
+        }
+    }
+
+    textValues[Number(currentId)] = text;
+
+    showTexts();
+
+    placeCursor(currentId);
+
+    timer = setInterval(setId, 1);
 }

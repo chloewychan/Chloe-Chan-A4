@@ -4,7 +4,7 @@
     </head>
     <body onload="start();">
         <div class="menuBar" id="menu-bar">
-            <button type="button" style="float:right" class="menuButton" onclick="showPages();">Pages</button>
+            <button type="button" style="float:right" class="menuButton" onclick="location.reload();">Reload</button>
             <button type="button" style="float:right" class="menuButton" onclick="save();">Save</button>
             <div style="float:left" class="dropdown">
                 Text
@@ -14,7 +14,7 @@
                     <button type="button" id="c" style="float:left" class="dropdownContent" onclick="addText('h3');">Heading 3</button>
                 </div>
             </div>
-            <div style="float:left" class="dropdown">
+            <div style="float:left" class="dropdown" onmouseover="clearInterval(timer)">
                 Style
                 <div style="float:left" class="dropdownContent">
                     <button type="button" id="d" style="float:left" class="dropdownContent" onclick="bold();">Bold</button>
